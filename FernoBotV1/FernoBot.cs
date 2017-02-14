@@ -21,6 +21,7 @@ namespace FernoBotV1
         {
             Client = new DiscordShardedClient(new DiscordSocketConfig
             {
+                WebSocketProvider = Discord.Net.Providers.WS4Net.WS4NetProvider.Instance,
                 AudioMode = AudioMode.Disabled,
                 MessageCacheSize = 10,
                 LogLevel = LogSeverity.Warning,
