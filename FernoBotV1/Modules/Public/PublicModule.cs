@@ -51,9 +51,9 @@ namespace FernoBotV1.Modules.Public
 
                 $"{Format.Bold("Stats")}\n" +
                 $"- Heap Size: {GetHeapSize()} MB\n" +
-                $"- Guilds: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +
-                $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}\n" +
-                $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
+                $"- Guilds: {(Context.Client as DiscordShardedClient).Guilds.Count}\n" +
+                $"- Channels: {(Context.Client as DiscordShardedClient).Guilds.Sum(g => g.Channels.Count)}\n" +
+                $"- Users: {(Context.Client as DiscordShardedClient).Guilds.Sum(g => g.Users.Where(x => !x.IsBot).Count())}"
             );
         }
 

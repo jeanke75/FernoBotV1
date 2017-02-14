@@ -56,7 +56,7 @@ namespace FernoBotV1
             if (arg.Exception != null)
                 Console.WriteLine(arg.Exception);
 
-            return Task.Delay(1);
+            return Task.FromResult(0);
         }
 
         public async Task RunAndBlockAsync(params string[] args)
