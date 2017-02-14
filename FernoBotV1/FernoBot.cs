@@ -37,7 +37,7 @@ namespace FernoBotV1
             });
             handler = new CommandHandler(Client, service);
 
-            await Client.LoginAsync(TokenType.Bot, "MjUwOTM4ODgzOTY4MjA0ODAw.C4MtIw.nX42yvPNTa_W2AQpJpJGUJfeQhA").ConfigureAwait(false);
+            await Client.LoginAsync(TokenType.Bot, ConfigurationManager.AppSettings["TOKEN"]).ConfigureAwait(false);
             await Client.ConnectAsync().ConfigureAwait(false);
 
             await Console.Out.WriteLineAsync("Connected");
