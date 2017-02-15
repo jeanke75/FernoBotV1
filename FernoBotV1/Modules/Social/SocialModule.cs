@@ -8,10 +8,11 @@ namespace FernoBotV1.Modules.Social
     {
         [Command("hug")]
         [Summary("Give someone a big hug.")]
-        public async Task Invite([Summary("The (optional) user to get info for")] IUser user)
+        public async Task Invite([Summary("The user to hug")] IUser user)
         {
-            var userInfo = user ?? Context.Client.CurrentUser;
-            await ReplyAsync($"{Context.Message.Author.Username} hugs {userInfo.Username}");
+            if (user.Id != Context.Message.Author.Id) {
+                await ReplyAsync($"{Context.Message.Author.Username} hugs {user.Username}");
+            }
         }
     }
 }
