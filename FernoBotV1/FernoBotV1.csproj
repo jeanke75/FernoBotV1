@@ -96,6 +96,7 @@
     <Compile Include="ExecuteCommandResult.cs" />
     <Compile Include="FernoBot.cs" />
     <Compile Include="Modules\Public\PublicModule.cs" />
+    <Compile Include="Modules\Social\SocialModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CommandHandler.cs" />

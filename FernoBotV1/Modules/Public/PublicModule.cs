@@ -30,14 +30,6 @@ namespace FernoBotV1.Modules.Public
             await Context.Guild.LeaveAsync();
         }
 
-        [Command("say")]
-        [Alias("echo")]
-        [Summary("Echos the provided input")]
-        public async Task Say([Remainder] string input)
-        {
-            await ReplyAsync(input);
-        }
-
         [Command("info")]
         public async Task Info()
         {
