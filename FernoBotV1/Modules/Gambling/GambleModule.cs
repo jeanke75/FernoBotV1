@@ -6,33 +6,33 @@ using FernoBotV1.Services;
 
 namespace FernoBotV1.Modules.Gambling
 {
-    public class GambleModule
+    public class GambleModule : ModuleBase
     {
+        
         [Command("dice")]
-        [Summary("Give someone a big hug.")]
-        public Task Dice(IUserMessage msg) => DiceRoll(msg, 1, 6);
+        [Summary("Roll a 6 sided dice.")]
+        public Task Dice() => DiceRoll(1, 6);
 
         [Command("dice")]
-        [Summary("Give someone a big hug.")]
-        public Task Dice(IUserMessage msg, int max) => DiceRoll(msg, 1, max);
+        [Summary("Roll an n sided dice.")]
+        public Task Dice(int max) => DiceRoll(1, max);
 
         [Command("dice")]
-        [Summary("Give someone a big hug.")]
-        public Task Dice(IUserMessage msg, int min, int max) => DiceRoll(msg, 1, max);
+        [Summary("Roll a dice with numbers between <min> and <max>.")]
+        public Task Dice(int min, int max) => DiceRoll(min, max);
 
-        private async Task DiceRoll(IUserMessage msg, int min, int max)
+        private async Task DiceRoll(int min, int max)
         {
-            var channel = (ITextChannel)msg.Channel;
             try
             {
                 if (min > max) throw new ArgumentException("The first argument should be bigger than the second.");
                 int rolled = new NadekoRandom().Next(min, max + 1);
 
-                await channel.SendMessageAsync($"{msg.Author.Mention} rolled {rolled}.").ConfigureAwait(false);
+                await ReplyAsync($"{Context.Message.Author.Mention} rolled {rolled}.").ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                await channel.SendMessageAsync($":anger: {ex.Message}").ConfigureAwait(false);
+                await ReplyAsync($":anger: {ex.Message}").ConfigureAwait(false);
             }
         }
     }
