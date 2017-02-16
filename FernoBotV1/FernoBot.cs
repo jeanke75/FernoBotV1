@@ -26,7 +26,7 @@ namespace FernoBotV1
                 AudioMode = AudioMode.Disabled,
                 MessageCacheSize = 10,
                 LogLevel = LogSeverity.Warning,
-                TotalShards = 2,
+                TotalShards = 1,
                 ConnectionTimeout = int.MaxValue
             });
             Client.Log += Client_Log;
@@ -34,7 +34,8 @@ namespace FernoBotV1
             //initialize Services
             service = new CommandService(new CommandServiceConfig()
             {
-                CaseSensitiveCommands = false
+                CaseSensitiveCommands = false,
+                DefaultRunMode = RunMode.Sync
             });
             handler = new CommandHandler(Client, service);
 
