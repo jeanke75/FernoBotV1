@@ -6,6 +6,7 @@ using Discord;
 using Discord.Commands;
 using FernoBotV1.Services.Database.Models;
 using FernoBotV1.Services.Exceptions;
+using FernoBotV1.Preconditions;
 
 namespace FernoBotV1.Modules.Games.RPG
 {
@@ -13,6 +14,7 @@ namespace FernoBotV1.Modules.Games.RPG
     {
         [Command(nameof(Create))]
         [Summary("Start your adventure")]
+        [Cooldown(0,1,0)]
         public async Task Create()
         {
             try

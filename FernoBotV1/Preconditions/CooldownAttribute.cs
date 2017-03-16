@@ -12,7 +12,7 @@ namespace FernoBotV1.Preconditions
     {
         public TimeSpan CooldownTime { get; }
 
-        public ConcurrentDictionary<ulong, DateTimeOffset> CoolingDown { get; set; }
+        private ConcurrentDictionary<ulong, DateTimeOffset> CoolingDown { get; set; }
 
         public CooldownAttribute(int hours, int minutes, int seconds)
         {
