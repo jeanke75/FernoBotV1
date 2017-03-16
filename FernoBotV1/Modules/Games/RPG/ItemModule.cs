@@ -24,7 +24,7 @@ namespace FernoBotV1.Modules.Games.RPG
                     {
                         try
                         {
-                            Item item = await GetSpecificItemInfoAsync(conn, itemId);
+                            Item item = await GetSpecificItemInfoAsync(conn, tr, itemId);
                             await ReplyAsync(item.name);
                         }
                         catch (Exception ex)
@@ -49,6 +49,39 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
+        public static async Task<Item> GetSpecificItemInfoAsync(SqlConnection conn, SqlTransaction tr, int itemId)
+        {
+            Item item = null;
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                List<string> views = new List<string>();
+                views.Add("WeaponsView");
+                views.Add("ArmorsView");
+                views.Add("PotionsView");
+                views.Add("ItemsView");
+
+                cmd.Transaction = tr;
+                cmd.Parameters.Add("@item", DbType.Int32).Value = itemId;
+
+                // do an exact search in each type of item
+                foreach (string view in views)
+                {
+                    cmd.CommandText = string.Format("select * from {0} where ItemID = @item", view);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            await reader.ReadAsync();
+                            item = RpgHelper.ParseItem(reader);
+                        }
+                        reader.Close();
+                    }
+                    if (item != null) break;
+                }
+            }
+            if (item == null) throw new RPGItemNotFoundException(itemId);
+            return item;
+        }
         public static async Task<Item> GetSpecificItemInfoAsync(SqlConnection conn, int itemId)
         {
             Item item = null;
