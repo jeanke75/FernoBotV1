@@ -21,7 +21,7 @@ namespace FernoBotV1.Preconditions
             //optional extra todo: start timer for regular cleanup
         }
 
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
             if (CoolingDown.ContainsKey(context.User.Id))
             {
@@ -29,7 +29,10 @@ namespace FernoBotV1.Preconditions
                 if (CoolingDown.TryGetValue(context.User.Id, out endTime))
                 {
                     if (endTime > DateTimeOffset.Now)
-                        return Task.FromResult(PreconditionResult.FromError("not cooled down yet"));
+                    {
+                        await context.Channel.SendMessageAsync($"\"{command.Name} is currently on cooldown. will be available again in: {(DateTimeOffset.Now - endTime).ToString("g")}");
+                        return PreconditionResult.FromError("not cooled down yet");
+                    }
                 }
                 else
                 {
@@ -39,7 +42,7 @@ namespace FernoBotV1.Preconditions
                 }
             }
             CoolingDown.AddOrUpdate(context.User.Id, DateTimeOffset.Now + CooldownTime, (key, val) => DateTimeOffset.Now + CooldownTime);
-            return Task.FromResult(PreconditionResult.FromSuccess());
+            return PreconditionResult.FromSuccess();
         }
     }
 }
