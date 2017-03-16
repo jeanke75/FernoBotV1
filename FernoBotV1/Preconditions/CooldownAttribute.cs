@@ -31,7 +31,7 @@ namespace FernoBotV1.Preconditions
                     if (endTime > DateTimeOffset.Now)
                     {
                         string  name = (context as Discord.IGuildUser)?.Nickname ?? context.User.Username;                       
-                        await context.Channel.SendMessageAsync($"{name}, {(endTime - DateTimeOffset.Now).TotalSeconds} seconds before you can use this command again.");
+                        await context.Channel.SendMessageAsync($"{name}, {Math.Round((endTime - DateTimeOffset.Now).TotalSeconds, 0)} seconds before you can use this command again.");
                         return PreconditionResult.FromError("not cooled down yet");
                     }
                 }
