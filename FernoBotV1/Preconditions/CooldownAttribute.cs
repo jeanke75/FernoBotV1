@@ -30,7 +30,8 @@ namespace FernoBotV1.Preconditions
                 {
                     if (endTime > DateTimeOffset.Now)
                     {
-                        await context.Channel.SendMessageAsync($"\"{command.Name} is currently on cooldown. will be available again in: {(DateTimeOffset.Now - endTime).ToString("g")}");
+                        string  name = (context as Discord.IGuildUser)?.Nickname ?? context.User.Username;                       
+                        await context.Channel.SendMessageAsync($"{name}, {(endTime - DateTimeOffset.Now).TotalSeconds} seconds before you can use this command again.");
                         return PreconditionResult.FromError("not cooled down yet");
                     }
                 }
