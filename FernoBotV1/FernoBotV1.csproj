@@ -96,24 +96,31 @@
     <Compile Include="ExecuteCommandResult.cs" />
     <Compile Include="FernoBot.cs" />
     <Compile Include="Modules\Gambling\GambleModule.cs" />
+    <Compile Include="Modules\Games\RPG\AttributeModule.cs" />
+    <Compile Include="Modules\Games\RPG\EquipmentModule.cs" />
+    <Compile Include="Modules\Games\RPG\InventoryModule.cs" />
+    <Compile Include="Modules\Games\RPG\ItemModule.cs" />
+    <Compile Include="Modules\Games\RPG\RpgHelper.cs" />
+    <Compile Include="Modules\Games\RPG\AccountModule.cs" />
     <Compile Include="Modules\Public\PublicModule.cs" />
     <Compile Include="Modules\Social\SocialModule.cs" />
     <Compile Include="Modules\Utility\UtilityModule.cs" />
-    <Compile Include="Preconditions\CooldownAttribute.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CommandHandler.cs" />
-    <Compile Include="Services\Cooldown.cs" />
+    <Compile Include="Services\Database\Models\Armor.cs" />
+    <Compile Include="Services\Database\Models\Item.cs" />
+    <Compile Include="Services\Database\Models\Potion.cs" />
+    <Compile Include="Services\Database\Models\Weapon.cs" />
     <Compile Include="Services\NadekoRandom.cs" />
+    <Compile Include="Services\Exceptions\RPGExceptions.cs" />
     <Compile Include="TypeReaders\CommandTypeReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\Database\Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
