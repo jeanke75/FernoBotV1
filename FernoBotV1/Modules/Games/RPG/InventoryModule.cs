@@ -34,11 +34,12 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
-        public async static Task<int> GetAmountOfSpecificItemInInventory(SqlConnection conn, long userId, Item item)
+        public async static Task<int> GetAmountOfSpecificItemInInventory(SqlConnection conn, SqlTransaction tr, long userId, Item item)
         {
             int amount = 0;
             using (SqlCommand cmd = conn.CreateCommand())
             {
+                cmd.Transaction = tr;
                 cmd.Parameters.Add("@user", DbType.Int64).Value = userId;
                 cmd.Parameters.Add("@item", DbType.Int32).Value = item.id;
                 cmd.CommandText = "select Amount from Inventory where UserID = @user and ItemID = @item";

@@ -26,14 +26,14 @@ namespace FernoBotV1.Modules.Games.RPG
                         {
                             try
                             {
-                                await GetUserIDAsync(conn, Context.Message.Author);
+                                await GetUserIDAsync(conn, tr, Context.Message.Author);
                                 await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
                             }
                             catch (RPGUserNotFoundException)
                             {
                                 long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
                                 // TODO discuss with pluriscient
-                                Item weapon = await ItemModule.GetSpecificItemInfoAsync(conn, "Wooden Sword");
+                                Item weapon = await ItemModule.GetSpecificItemInfoAsync(conn, tr, "Wooden Sword");
                                 await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, weapon.id, 1);
                                 await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Headband", 1);
                                 await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Shirt", 1);
@@ -67,11 +67,12 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
-        public async static Task<long> GetUserIDAsync(SqlConnection conn, IUser discordUser)
+        public async static Task<long> GetUserIDAsync(SqlConnection conn, SqlTransaction tr, IUser discordUser)
         {
             long userId = 0;
             using (SqlCommand cmd = conn.CreateCommand())
             {
+                cmd.Transaction = tr;
                 cmd.Parameters.Add("@DiscordID", DbType.String).Value = discordUser.Id.ToString();
                 cmd.CommandText = "select UserID from Users where DiscordID = @DiscordID";
                 using (SqlDataReader reader = cmd.ExecuteReader())
@@ -99,7 +100,7 @@ namespace FernoBotV1.Modules.Games.RPG
                 await cmd.ExecuteNonQueryAsync();
             }
 
-            long userId = await GetUserIDAsync(conn, discordUser);
+            long userId = await GetUserIDAsync(conn, tr, discordUser);
 
             //TODO get initial hp from the hp calculation function so that any changes to the function are reflected on new accounts
             // create stats

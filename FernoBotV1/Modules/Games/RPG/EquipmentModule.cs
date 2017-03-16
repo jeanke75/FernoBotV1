@@ -1,9 +1,7 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Discord.Commands;
-using FernoBotV1.Services;
 using FernoBotV1.Services.Database.Models;
 
 namespace FernoBotV1.Modules.Games.RPG
