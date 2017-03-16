@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -10,6 +11,44 @@ namespace FernoBotV1.Modules.Games.RPG
 {
     public class ItemModule : ModuleBase
     {
+        [Command("Item")]
+        [Summary("Get info about an item using the id")]
+        public async Task ItemInfo(int itemId)
+        {
+            try
+            {
+                using (SqlConnection conn = RpgHelper.GetConnection())
+                {
+                    await conn.OpenAsync();
+                    using (SqlTransaction tr = conn.BeginTransaction())
+                    {
+                        try
+                        {
+                            Item item = await GetSpecificItemInfoAsync(conn, itemId);
+                            await ReplyAsync(item.name);
+                        }
+                        catch (Exception ex)
+                        {
+                            tr.Rollback();
+                            throw ex;
+                        }
+                        finally
+                        {
+                            conn.Close();
+                        }
+                    }
+                }
+            }
+            catch (RPGException ex)
+            {
+                await ReplyAsync($"{Context.Message.Author.Username},{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                await ReplyAsync($"Failed to start adventure for {Context.Message.Author.Username} {ex.ToString()}");
+            }
+        }
+
         public static async Task<Item> GetSpecificItemInfoAsync(SqlConnection conn, int itemId)
         {
             Item item = null;
