@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+//using System.Collections.Concurrent;
 using System.Configuration;
 using System.Threading.Tasks;
 using Discord;
@@ -16,7 +16,7 @@ namespace FernoBotV1
         public static CommandService service { get; private set; }
         public static CommandHandler handler { get; private set; }
         public static DiscordShardedClient Client { get; private set; }
-        public static ConcurrentDictionary<string, string> ModulePrefixes { get; private set; }
+        //public static ConcurrentDictionary<string, string> ModulePrefixes { get; private set; }
         public static bool Ready { get; private set; }
         public async Task RunAsync(params string[] args)
         {

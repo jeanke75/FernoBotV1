@@ -1,16 +1,13 @@
-﻿using Discord.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using Discord.Commands;
 
 namespace FernoBotV1.Modules.Utility
 {
     public class UtilityModule : ModuleBase
     {
         [Command(nameof(Ping))]
-        [Discord.Commands.Summary("ping the bot")]
+        [Summary("ping the bot")]
         public async Task Ping()
         {
             try
@@ -21,7 +18,6 @@ namespace FernoBotV1.Modules.Utility
             {
                 Console.WriteLine(e.Message);
             }
-
         }
     }
 }
