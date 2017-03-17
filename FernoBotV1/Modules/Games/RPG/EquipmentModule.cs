@@ -3,11 +3,14 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Discord.Commands;
 using FernoBotV1.Services.Database.Models;
+using System.Collections.Generic;
 
 namespace FernoBotV1.Modules.Games.RPG
 {
     public class EquipmentModule : ModuleBase
     {
+       public static List<string> DefaultItems = new List<string> { "wooden sword" };
+
         /*[Command("Equip")]
         [Summary("Equip an item from your inventory")]
         [Priority(1)]

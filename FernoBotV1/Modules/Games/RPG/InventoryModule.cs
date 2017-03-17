@@ -36,9 +36,9 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
-        public async static Task AddItemsToInventoryAsync(SqlConnection conn, SqlTransaction tr, long userId, List<Tuple<Item, int>> items)
+        public async static Task AddItemsToInventoryAsync(SqlConnection conn, SqlTransaction tr, long userId, Dictionary<int, int> items)
         {
-            
+           
         }
 
         public async static Task<int> GetAmountOfSpecificItemInInventory(SqlConnection conn, SqlTransaction tr, long userId, Item item)
