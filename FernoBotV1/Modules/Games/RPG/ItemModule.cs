@@ -5,11 +5,33 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using FernoBotV1.Services.Database.Models;
 using FernoBotV1.Services.Exceptions;
+using System.Collections.Concurrent;
+using System.Linq;
+using System;
 
 namespace FernoBotV1.Modules.Games.RPG
 {
     public class ItemModule : ModuleBase
     {
+        /// <summary>
+        /// Dictionaty that allows a lookup by name
+        /// </summary>
+        public static ConcurrentDictionary<string, Tuple<string, int>> ItemLookup { get; set; }
+        
+        public static bool ItemExists(int id) => ItemLookup.Values.Any(x => x.Item2 == id);
+
+        public static async Task InitItemLookup(SqlConnection conn)
+        {
+            using (var cmd = conn.CreateCommand())
+            {
+                //todo I want some sql magic here :D
+
+            }
+        }
+
+
+
+
         /*[Command("Item")]
         [Summary("Get info about an item using the id")]
         public async Task ItemInfo(int itemId)
@@ -47,6 +69,34 @@ namespace FernoBotV1.Modules.Games.RPG
                 await ReplyAsync($"Failed to start adventure for {Context.Message.Author.Username} {ex.ToString()}");
             }
         }*/
+        /// <summary>
+        /// Search all items by the given query
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="tr"></param>
+        /// <param name="searchQuery"></param>
+        /// <returns></returns>
+        public static async Task<List<Item>> SearchItemsAsync(SqlConnection conn, SqlTransaction tr, string searchQuery)
+        {
+            searchQuery = searchQuery.ToLowerInvariant();
+            var collection = ItemLookup.Keys.Where(x => x.Contains(searchQuery)).OrderBy(str => str == searchQuery ? 0 : str.StartsWith(searchQuery) ? 1 : 2);
+            var toReturn = new List<Item>();
+            if (!collection.Any())
+                return toReturn;
+            if (collection.First() == searchQuery)
+            {
+                collection = collection.Take(1).OrderBy(x => 0);
+            }
+            foreach (var itemName in collection)
+            {
+                var itemId = ItemLookup[itemName].Item2;
+                toReturn.Add(await GetSpecificItemInfoAsync(conn, tr, itemId));
+            }
+            return toReturn;
+        }
+
+
+
 
         public static async Task<Item> GetSpecificItemInfoAsync(SqlConnection conn, SqlTransaction tr, int itemId)
         {
