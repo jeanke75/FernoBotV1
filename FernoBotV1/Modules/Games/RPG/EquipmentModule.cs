@@ -9,7 +9,7 @@ namespace FernoBotV1.Modules.Games.RPG
 {
     public class EquipmentModule : ModuleBase
     {
-       public static List<string> DefaultItems = new List<string> { "wooden sword" };
+       public static List<string> DefaultItems = new List<string> { "wooden sword", "cloth headband", "cloth shirt", "cloth pants", "cloth boots", "cloth gloves" };
 
         /*[Command("Equip")]
         [Summary("Equip an item from your inventory")]
