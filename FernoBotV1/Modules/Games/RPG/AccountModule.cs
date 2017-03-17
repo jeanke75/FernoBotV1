@@ -32,16 +32,17 @@ namespace FernoBotV1.Modules.Games.RPG
                             catch (RPGUserNotFoundException)
                             {
                                 long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
-                                // TODO discuss with pluriscient
-                                Item weapon = await ItemModule.GetSpecificItemInfoAsync(conn, tr, "Wooden Sword");
-                                await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, weapon.id, 1);
-                                await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Headband", 1);
-                                await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Shirt", 1);
-                                await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Pants", 1);
-                                await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Boots", 1);
-                                await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Gloves", 1);
-                                await CreateEquippedItemsAsync(conn, tr, userId, "Wooden Sword", null, "Cloth Headband", "Cloth Shirt", "Cloth Pants", "Cloth Boots", "Cloth Gloves", null);
+                                Task[] tasks = new Task[6];
+                                tasks[0] = InventoryModule.AddItemToInventoryAsync(conn, tr, userId, weapon.id, 1);
+                                tasks[1] = InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Headband", 1);
+                                tasks[2] = InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Shirt", 1);
+                                tasks[3] = InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Pants", 1);
+                                tasks[4] = InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Boots", 1);
+                                tasks[5] = InventoryModule.AddItemToInventoryAsync(conn, tr, userId, "Cloth Gloves", 1);
 
+                                await Task.WhenAll(tasks).ContinueWith(_ => CreateEquippedItemsAsync(conn, tr, userId, "Wooden Sword", null, "Cloth Headband", "Cloth Shirt", "Cloth Pants", "Cloth Boots", "Cloth Gloves", null)).Unwrap();
+                                await CreateEquippedItemsAsync(conn, tr, userId, "Wooden Sword", null, "Cloth Headband", "Cloth Shirt", "Cloth Pants", "Cloth Boots", "Cloth Gloves", null);
+                                
                                 await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
                             }
                         }

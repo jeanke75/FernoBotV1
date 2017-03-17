@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Discord.Commands;
@@ -8,7 +10,7 @@ namespace FernoBotV1.Modules.Games.RPG
 {
     public class InventoryModule : ModuleBase
     {
-        public async static Task AddItemToInventoryAsync(SqlConnection conn, SqlTransaction tr, long userId, long itemId, int amount)
+        public async static Task AddItemToInventoryAsync(SqlConnection conn, SqlTransaction tr, long userId, int itemId, int amount)
         {
             using (SqlCommand cmd = conn.CreateCommand())
             {
@@ -34,6 +36,11 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
+        public async static Task AddItemsToInventoryAsync(SqlConnection conn, SqlTransaction tr, long userId, List<Tuple<Item, int>> items)
+        {
+            
+        }
+
         public async static Task<int> GetAmountOfSpecificItemInInventory(SqlConnection conn, SqlTransaction tr, long userId, Item item)
         {
             int amount = 0;
@@ -55,6 +62,8 @@ namespace FernoBotV1.Modules.Games.RPG
             }
             return amount;
         }
+
+
 
         //public async static Task<List<Item>> AreItemsInInventory(List<Item> items)
     }
