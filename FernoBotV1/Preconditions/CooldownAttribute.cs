@@ -21,6 +21,13 @@ namespace FernoBotV1.Preconditions
 
         private object cleanupLock = new object();
 
+        
+        /// <summary>
+        /// Set up a cooldown (per-user) for the command with the given time
+        /// </summary>
+        /// <param name="hours"></param>
+        /// <param name="minutes"></param>
+        /// <param name="seconds"></param>
         public CooldownAttribute(int hours, int minutes, int seconds)
         {
             CooldownTime = new TimeSpan(hours, minutes, seconds);
@@ -35,6 +42,11 @@ namespace FernoBotV1.Preconditions
             CleanupTimer.Elapsed += CleanupTimer_Elapsed;
             CleanupTimer.Start();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="seconds"></param>
+        public CooldownAttribute(int seconds) : this(0, 0, seconds) { }
 
         private void CleanupTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
