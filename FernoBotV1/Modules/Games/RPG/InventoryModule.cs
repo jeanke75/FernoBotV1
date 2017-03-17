@@ -36,9 +36,23 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
-        public async static Task AddItemsToInventoryAsync(SqlConnection conn, SqlTransaction tr, long userId, List<Tuple<Item, int>> items)
+        public async static Task AddItemsToInventoryAsync(SqlConnection conn, SqlTransaction tr, long userId, Dictionary<int, int> items)
         {
-            
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.Transaction = tr;
+                cmd.Parameters.Add("@user", DbType.Int64).Value = userId.ToString();
+
+                string cmdString = "";
+                foreach(var kvp in items)
+                {
+                    cmd.Parameters.Add("@item" + kvp.Key, DbType.Int32).Value = kvp.Key;
+                    cmd.Parameters.Add("@amount" + kvp.Key, DbType.Int32).Value = kvp.Value;
+                    cmdString += $"insert into Inventory (UserID, ItemID, Amount) values (@user, @item{kvp.Key}, @amount{kvp.Value});";
+                }
+                cmd.CommandText = cmdString;
+                await cmd.ExecuteNonQueryAsync();
+            }
         }
 
         public async static Task<int> GetAmountOfSpecificItemInInventory(SqlConnection conn, SqlTransaction tr, long userId, Item item)
