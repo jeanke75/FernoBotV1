@@ -6,6 +6,7 @@ using Discord;
 using Discord.Audio;
 using Discord.Commands;
 using Discord.WebSocket;
+using FernoBotV1.Modules.Games.RPG;
 using FernoBotV1.Services;
 
 namespace FernoBotV1
@@ -43,6 +44,8 @@ namespace FernoBotV1
             await Client.ConnectAsync().ConfigureAwait(false);
 
             await Console.Out.WriteLineAsync("Connected");
+
+            await ItemModule.InitItemLookup(RpgHelper.GetConnection());
 
             await handler.StartHandling().ConfigureAwait(false);
 

@@ -16,16 +16,30 @@ namespace FernoBotV1.Modules.Games.RPG
         /// <summary>
         /// Dictionaty that allows a lookup by name
         /// </summary>
-        public static ConcurrentDictionary<string, Tuple<string, int>> ItemLookup { get; set; }
+        public static ConcurrentDictionary<string, Tuple<int, string>> ItemLookup { get; set; }
         
-        public static bool ItemExists(int id) => ItemLookup.Values.Any(x => x.Item2 == id);
+        public static bool ItemExists(int id) => ItemLookup.Values.Any(x => x.Item1 == id);
 
         public static async Task InitItemLookup(SqlConnection conn)
         {
-            using (var cmd = conn.CreateCommand())
+            using (SqlCommand cmd = conn.CreateCommand())
             {
-                //todo I want some sql magic here :D
-
+                cmd.CommandText = "select ItemID, Name, lower(Name) as LowerName from Items";
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    try
+                    {
+                        if (reader.HasRows)
+                        {
+                            await reader.ReadAsync();
+                            ItemLookup.AddOrUpdate((string)reader["LowerName"], _ => Tuple.Create((int)reader["ItemID"], (string)reader["Name"]), (_, x) => Tuple.Create((int)reader["ItemID"], (string)reader["Name"]));
+                        }
+                    }
+                    finally
+                    {
+                        reader.Close();
+                    }
+                }
             }
         }
 
