@@ -107,10 +107,11 @@ namespace FernoBotV1.Modules.Games.RPG
                             }
 
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            await ReplyAsync(ex.StackTrace);
                             tr.Rollback();
-                            throw;
+                            throw ex;
                         }
                         finally
                         {
