@@ -100,12 +100,13 @@ namespace FernoBotV1.Modules.Games.RPG
                                 await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
 
                                 await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
+
+                                tr.Commit();
                             }
                             else
                             {
                                 await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
                             }
-
                         }
                         catch (Exception ex)
                         {

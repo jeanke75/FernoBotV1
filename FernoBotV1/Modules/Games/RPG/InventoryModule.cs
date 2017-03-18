@@ -47,7 +47,7 @@ namespace FernoBotV1.Modules.Games.RPG
                 {
                     cmd.Parameters.Add("@item" + kvp.Key, DbType.Int32).Value = kvp.Key;
                     cmd.Parameters.Add("@amount" + kvp.Key, DbType.Int32).Value = kvp.Value;
-                    cmdString += $"insert into Inventory (UserID, ItemID, Amount) values (@user, @item{kvp.Key}, @amount{kvp.Value});";
+                    cmdString += $"insert into Inventory (UserID, ItemID, Amount) values (@user, @item{kvp.Key}, @amount{kvp.Key});";
                 }
                 cmd.CommandText = cmdString;
                 await cmd.ExecuteNonQueryAsync();
