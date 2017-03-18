@@ -85,35 +85,28 @@ namespace FernoBotV1.Modules.Games.RPG
                     {
                         try
                         {
-                            try
+                            if (await GetUserIDAsync(conn, tr, Context.Message.Author) == 0)
                             {
-                                if (await GetUserIDAsync(conn, tr, Context.Message.Author) == 0) 
+                                long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
+
+                                if (DefaultItemCollection.First().Key.id == default(int))
                                 {
-                                    long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
-
-                                    if (DefaultItemCollection.First().Key.id == default(int))
+                                    foreach (var kvp in DefaultItemCollection)
                                     {
-                                        foreach (var kvp in DefaultItemCollection)
-                                        {
-                                            kvp.Key.id = ItemModule.ItemLookup[kvp.Key.name].Item1;
-                                        }
+                                        kvp.Key.id = ItemModule.ItemLookup[kvp.Key.name].Item1;
                                     }
-                                    var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
+                                }
+                                var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
 
-                                    await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
-                                    
+                                await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
+
 
                                 await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
-                                }
-                                else
-                                {
-                                    await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
-                                }
-                                
                             }
-                            catch (RPGUserNotFoundException)
+                            else
                             {
-                                
+                                await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
+                            }
                         }
                         catch (Exception ex)
                         {
