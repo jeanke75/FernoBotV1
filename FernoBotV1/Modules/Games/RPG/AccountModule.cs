@@ -1,18 +1,76 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using FernoBotV1.Preconditions;
 using FernoBotV1.Services.Database.Models;
 using FernoBotV1.Services.Exceptions;
-using FernoBotV1.Preconditions;
-using System.Linq;
 
 namespace FernoBotV1.Modules.Games.RPG
 {
     public class AccountModule : ModuleBase
     {
+        public static Dictionary<Item, int> DefaultItemCollection { get; set; } = new Dictionary<Item, int>
+        {
+            {
+                new Weapon()
+                {
+                    name = "wooden sword",
+                    type = ItemType.Weapon
+                },
+                1
+            },
+            {
+                new Armor()
+                {
+                    name = "cloth headband",
+                    type = ItemType.Armor,
+                    subtype = ArmorType.Helmet
+                },
+                1
+            },
+            {
+                new Armor()
+                {
+                    name = "cloth shirt",
+                    type = ItemType.Armor,
+                    subtype = ArmorType.Upper
+                },
+                1
+            },
+            {
+                new Armor()
+                {
+                    name = "cloth pants",
+                    type = ItemType.Armor,
+                    subtype = ArmorType.Pants
+                },
+                1
+            },
+            {
+                new Armor()
+                {
+                    name = "cloth boots",
+                    type = ItemType.Armor,
+                    subtype = ArmorType.Boots
+                },
+                1
+            },
+            {
+                new Armor()
+                {
+                    name = "cloth gloves",
+                    type = ItemType.Armor,
+                    subtype = ArmorType.Gauntlets
+                },
+                1
+            }
+        };
+
         [Command(nameof(Create))]
         [Summary("Start your adventure")]
         [Cooldown(0, 1, 0)]
@@ -29,19 +87,33 @@ namespace FernoBotV1.Modules.Games.RPG
                         {
                             try
                             {
-                                await GetUserIDAsync(conn, tr, Context.Message.Author);
-                                await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
+                                if (await GetUserIDAsync(conn, tr, Context.Message.Author) == 0) 
+                                {
+                                    long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
+
+                                    if (DefaultItemCollection.First().Key.id == default(int))
+                                    {
+                                        foreach (var kvp in DefaultItemCollection)
+                                        {
+                                            kvp.Key.id = ItemModule.ItemLookup[kvp.Key.name].Item1;
+                                        }
+                                    }
+                                    var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
+
+                                    await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
+                                    
+
+                                await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
+                                }
+                                else
+                                {
+                                    await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
+                                }
+                                
                             }
                             catch (RPGUserNotFoundException)
                             {
-                                long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
-                                await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, EquipmentModule.DefaultItems.ToDictionary(s => ItemModule.ItemLookup[s].Item1, _ => 1));
-
-
-                                await CreateEquippedItemsAsync(conn, tr, userId, "Wooden Sword", null, "Cloth Headband", "Cloth Shirt", "Cloth Pants", "Cloth Boots", "Cloth Gloves", null);
-
-                                await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
-                            }
+                                
                         }
                         catch (Exception ex)
                         {
@@ -83,7 +155,6 @@ namespace FernoBotV1.Modules.Games.RPG
                     reader.Close();
                 }
             }
-            if (userId == 0) throw new RPGUserNotFoundException();
             return userId;
         }
 
@@ -124,30 +195,6 @@ namespace FernoBotV1.Modules.Games.RPG
             return userId;
         }
 
-        private async static Task CreateEquippedItemsAsync(SqlConnection conn, SqlTransaction tr, long userId, string weaponName, string shieldName,
-                                                           string helmetName, string upperName, string pantsName, string bootsName, string gauntletsName,
-                                                           string mantleName)
-        {
-            using (SqlCommand cmd = conn.CreateCommand())
-            {
-                cmd.Transaction = tr;
-                cmd.Parameters.Add("@user", DbType.Int64).Value = userId;
-                cmd.Parameters.Add("@helmet", DbType.String).Value = helmetName;
-                cmd.Parameters.Add("@upper", DbType.String).Value = upperName;
-                cmd.Parameters.Add("@pants", DbType.String).Value = pantsName;
-                cmd.Parameters.Add("@boots", DbType.String).Value = bootsName;
-                cmd.Parameters.Add("@gauntlets", DbType.String).Value = gauntletsName;
-                cmd.Parameters.Add("@mantle", DbType.String).Value = mantleName;
-                cmd.Parameters.Add("@shield", DbType.String).Value = shieldName;
-                cmd.Parameters.Add("@weapon", DbType.String).Value = weaponName;
-                cmd.CommandText = "insert into Equipped (UserID, HelmetID, UpperID, PantsID, BootsID, GloveID, MantleID, ShieldID, WeaponID) " +
-                                  "values (@user, (select ItemID from Items where Name = @helmet), (select ItemID from Items where Name = @upper, " +
-                                  "(select ItemID from Items where Name = @pants), (select ItemID from Items where Name = @boots), " +
-                                  "(select ItemID from Items where Name = @gauntlets), (select ItemID from Items where Name = @mantle), " +
-                                  "(select ItemID from Items where Name = @shield), (select ItemID from Items where Name = @weapon))";
-                await cmd.ExecuteNonQueryAsync();
-            }
-        }
         /*
                 //create cooldowns
                 cmd.Parameters.Add("@DateTime", DbType.DateTime).Value = new DateTime(2000, 1, 1, 0, 0, 0);
