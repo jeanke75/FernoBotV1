@@ -79,6 +79,7 @@ namespace FernoBotV1.Modules.Games.RPG
         {
             try
             {
+                await ReplyAsync("WHAT IS HAPPENING");
                 LogChannel = this.Context.Channel;
                 using (SqlConnection conn = RpgHelper.GetConnection())
                 {
