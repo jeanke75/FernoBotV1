@@ -45,7 +45,7 @@ namespace FernoBotV1
 
             await Console.Out.WriteLineAsync("Connected");
 
-            await ItemModule.InitItemLookup(RpgHelper.GetConnection());
+            await ItemModule.InitItemLookup();
 
             await handler.StartHandling().ConfigureAwait(false);
 

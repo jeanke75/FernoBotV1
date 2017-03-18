@@ -20,31 +20,39 @@ namespace FernoBotV1.Modules.Games.RPG
 
         public static bool ItemExists(int id) => ItemLookup.Values.Any(x => x.Item1 == id);
 
-        public static async Task InitItemLookup(SqlConnection conn)
+        public static async Task InitItemLookup()
         {
-            using (SqlCommand cmd = conn.CreateCommand())
+            ItemLookup = new ConcurrentDictionary<string, Tuple<int, string>>();
+            using (SqlConnection conn = RpgHelper.GetConnection())
             {
-                cmd.CommandText = "select ItemID, Name, lower(Name) as LowerName from Items";
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                await conn.OpenAsync();
+                try
                 {
-                    try
+                    using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        if (reader.HasRows)
+                        cmd.CommandText = "select ItemID, Name, lower(Name) as LowerName from Items";
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            await reader.ReadAsync();
-                            ItemLookup.AddOrUpdate((string)reader["LowerName"], _ => Tuple.Create((int)reader["ItemID"], (string)reader["Name"]), (_, x) => Tuple.Create((int)reader["ItemID"], (string)reader["Name"]));
+                            try
+                            {
+                                while (await reader.ReadAsync())
+                                {
+                                    ItemLookup.AddOrUpdate((string)reader["LowerName"], _ => Tuple.Create((int)reader["ItemID"], (string)reader["Name"]), (_, x) => Tuple.Create((int)reader["ItemID"], (string)reader["Name"]));
+                                }
+                            }
+                            finally
+                            {
+                                reader.Close();
+                            }
                         }
                     }
-                    finally
-                    {
-                        reader.Close();
-                    }
+                }
+                finally
+                {
+                    conn.Close();
                 }
             }
         }
-
-
-
 
         /*[Command("Item")]
         [Summary("Get info about an item using the id")]

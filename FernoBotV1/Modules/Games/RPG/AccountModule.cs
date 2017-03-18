@@ -79,33 +79,26 @@ namespace FernoBotV1.Modules.Games.RPG
         {
             try
             {
-                await ReplyAsync("WHAT IS HAPPENING");
-                LogChannel = this.Context.Channel;
                 using (SqlConnection conn = RpgHelper.GetConnection())
                 {
                     await conn.OpenAsync();
                     using (SqlTransaction tr = conn.BeginTransaction())
                     {
-                        try
-                        {
                             try
                             {
-                                await ReplyAsync("starting creation");
                                 if (await GetUserIDAsync(conn, tr, Context.Message.Author) == 0)
                                 {
                                     long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
-                                    await ReplyAsync("created user");
-                                    //if (DefaultItemCollection.First().Key.id == default(int))
-                                    //{
-                                    //    foreach (var kvp in DefaultItemCollection)
-                                    //    {
-                                    //        kvp.Key.id = ItemModule.ItemLookup[kvp.Key.name].Item1;
-                                    //    }
-                                    //}
-                                    //var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
+                                    if (DefaultItemCollection.First().Key.id == default(int))
+                                    {
+                                        foreach (var kvp in DefaultItemCollection)
+                                        {
+                                            kvp.Key.id = ItemModule.ItemLookup[kvp.Key.name].Item1;
+                                        }
+                                    }
+                                    var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
 
-                                    //await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
-                                    await InventoryModule.AddItemToInventoryAsync(conn, tr, userId, 1, 1);
+                                    await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
 
                                     await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
                                 }
@@ -113,10 +106,6 @@ namespace FernoBotV1.Modules.Games.RPG
                                 {
                                     await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
                                 }
-
-                            }
-                            catch (RPGUserNotFoundException)
-                            {
 
                             }
                             catch (Exception ex)
@@ -128,8 +117,6 @@ namespace FernoBotV1.Modules.Games.RPG
                             {
                                 conn.Close();
                             }
-                        }
-                        catch { }
                     }
                 }
             }
