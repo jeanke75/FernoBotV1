@@ -10,6 +10,11 @@
 
     public class Item
     {
+        public Item()
+        {
+            type = ItemType.Item;
+        }
+
         public int id { get; set; }
         public string name { get; set; }
         public ItemType type { get; set; }

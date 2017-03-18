@@ -13,6 +13,10 @@
 
     public class Armor : Item
     {
+        public Armor()
+        {
+            type = ItemType.Armor;
+        }
         public ArmorType subtype { get; set; }
         public short defense { get; set; }
         public byte strength { get; set; }
