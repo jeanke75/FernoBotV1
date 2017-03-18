@@ -89,6 +89,7 @@ namespace FernoBotV1.Modules.Games.RPG
                         {
                             try
                             {
+                                await ReplyAsync("starting creation");
                                 if (await GetUserIDAsync(conn, tr, Context.Message.Author) == 0)
                                 {
                                     long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
@@ -144,6 +145,7 @@ namespace FernoBotV1.Modules.Games.RPG
         public async static Task<long> GetUserIDAsync(SqlConnection conn, SqlTransaction tr, IUser discordUser)
         {
             long userId = 0;
+            await LogChannel.SendMessageAsync("searching user id");
             using (SqlCommand cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tr;
