@@ -109,7 +109,8 @@ namespace FernoBotV1.Modules.Games.RPG
                         }
                         catch (Exception ex)
                         {
-                            await ReplyAsync(ex.StackTrace);
+                            await ReplyAsync(ex.StackTrace.Substring(0, 1500));
+
                             tr.Rollback();
                             throw ex;
                         }
