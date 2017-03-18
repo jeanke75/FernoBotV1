@@ -18,4 +18,9 @@ namespace FernoBotV1.Services.Exceptions
     {
         public RPGUserNotFoundException() : base() { }
     }
+
+    public class RPGInvalidItemTypeException : RPGException
+    {
+        public RPGInvalidItemTypeException(string message) : base(message) { }
+    }
 }

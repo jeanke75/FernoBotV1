@@ -33,7 +33,6 @@ namespace FernoBotV1.Modules.Games.RPG
                     {
                         id = (int)reader["ItemID"],
                         name = (string)reader["Name"],
-                        type = itemtype,
                         levelReq = (byte)reader["Level"],
                         valueBuy = (int)reader["ValueBuy"],
                         valueSell = (int)reader["ValueSell"],
@@ -51,7 +50,6 @@ namespace FernoBotV1.Modules.Games.RPG
                     {
                         id = (int)reader["ItemID"],
                         name = (string)reader["Name"],
-                        type = itemtype,
                         subtype = (ArmorType)((string)reader["SubType"])[0],
                         levelReq = (byte)reader["Level"],
                         valueBuy = (int)reader["ValueBuy"],
@@ -68,7 +66,6 @@ namespace FernoBotV1.Modules.Games.RPG
                     {
                         id = (int)reader["ItemID"],
                         name = (string)reader["Name"],
-                        type = itemtype,
                         levelReq = (byte)reader["Level"],
                         valueBuy = (int)reader["ValueBuy"],
                         heal = (short)reader["Heal"]
@@ -79,7 +76,6 @@ namespace FernoBotV1.Modules.Games.RPG
                     {
                         id = (int)reader["ItemID"],
                         name = (string)reader["Name"],
-                        type = itemtype,
                         levelReq = (byte)reader["Level"],
                         valueBuy = (int)reader["ValueBuy"]
                     };
