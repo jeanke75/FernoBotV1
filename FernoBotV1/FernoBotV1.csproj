@@ -94,6 +94,7 @@
     <Compile Include="DataStructures\ConcurrentHashSet.cs" />
     <Compile Include="DataStructures\PlatformHelper.cs" />
     <Compile Include="ExecuteCommandResult.cs" />
+    <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="FernoBot.cs" />
     <Compile Include="Modules\Gambling\GambleModule.cs" />
     <Compile Include="Modules\Games\RPG\AttributeModule.cs" />
