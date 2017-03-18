@@ -2,6 +2,10 @@
 {
     public class Weapon : Item
     {
+        public Weapon()
+        {
+            type = ItemType.Weapon;
+        }
         public short attack_min { get; set; }
         public short attack_max { get; set; }
         public byte critical { get; set; }
