@@ -70,7 +70,6 @@ namespace FernoBotV1.Modules.Games.RPG
                 1
             }
         };
-        public static IMessageChannel LogChannel { get; private set; }
 
         [Command(nameof(Create))]
         [Summary("Start your adventure")]
@@ -84,39 +83,39 @@ namespace FernoBotV1.Modules.Games.RPG
                     await conn.OpenAsync();
                     using (SqlTransaction tr = conn.BeginTransaction())
                     {
-                            try
+                        try
+                        {
+                            if (await GetUserIDAsync(conn, tr, Context.Message.Author) == 0)
                             {
-                                if (await GetUserIDAsync(conn, tr, Context.Message.Author) == 0)
+                                long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
+                                if (DefaultItemCollection.First().Key.id == default(int))
                                 {
-                                    long userId = await CreateUserAsync(conn, tr, Context.Message.Author);
-                                    if (DefaultItemCollection.First().Key.id == default(int))
+                                    foreach (var kvp in DefaultItemCollection)
                                     {
-                                        foreach (var kvp in DefaultItemCollection)
-                                        {
-                                            kvp.Key.id = ItemModule.ItemLookup[kvp.Key.name].Item1;
-                                        }
+                                        kvp.Key.id = ItemModule.ItemLookup[kvp.Key.name].Item1;
                                     }
-                                    var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
-
-                                    await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
-
-                                    await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
                                 }
-                                else
-                                {
-                                    await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
-                                }
+                                var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
 
+                                await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
+
+                                await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                tr.Rollback();
-                                throw ex;
+                                await ReplyAsync($"{Context.Message.Author.Username}, you've already started your adventure.");
                             }
-                            finally
-                            {
-                                conn.Close();
-                            }
+
+                        }
+                        catch (Exception)
+                        {
+                            tr.Rollback();
+                            throw;
+                        }
+                        finally
+                        {
+                            conn.Close();
+                        }
                     }
                 }
             }
@@ -133,7 +132,6 @@ namespace FernoBotV1.Modules.Games.RPG
         public async static Task<long> GetUserIDAsync(SqlConnection conn, SqlTransaction tr, IUser discordUser)
         {
             long userId = 0;
-            await LogChannel.SendMessageAsync("searching user id");
             using (SqlCommand cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tr;
@@ -150,7 +148,6 @@ namespace FernoBotV1.Modules.Games.RPG
                 }
 
             }
-            await LogChannel.SendMessageAsync("found user id = " + userId);
             return userId;
         }
 
