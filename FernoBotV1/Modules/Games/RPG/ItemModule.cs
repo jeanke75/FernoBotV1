@@ -17,7 +17,7 @@ namespace FernoBotV1.Modules.Games.RPG
         /// Dictionaty that allows a lookup by name
         /// </summary>
         public static ConcurrentDictionary<string, Tuple<int, string>> ItemLookup { get; set; }
-        
+
         public static bool ItemExists(int id) => ItemLookup.Values.Any(x => x.Item1 == id);
 
         public static async Task InitItemLookup(SqlConnection conn)
@@ -103,14 +103,57 @@ namespace FernoBotV1.Modules.Games.RPG
             }
             foreach (var itemName in collection)
             {
-                var itemId = ItemLookup[itemName].Item2;
+                int itemId = ItemLookup[itemName].Item1;
                 toReturn.Add(await GetSpecificItemInfoAsync(conn, tr, itemId));
             }
             return toReturn;
         }
 
 
-
+        public static async Task<List<Item>> GetItemsInfoAsync(SqlConnection conn, SqlTransaction tr, List<int> itemIds)
+        {
+            List<Item> result = new List<Item>();
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.Transaction = tr;
+                List<string> views = new List<string>
+                {
+                    "WeaponsView",
+                    "ArmorsView",
+                    "PotionsView",
+                    "ItemsView"
+                };
+                foreach (var itemId in itemIds)
+                {
+                    Item item = null;
+                    if (!cmd.Parameters.Contains("@item"))
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@item", DbType.Int32));
+                    }
+                    cmd.Parameters["@item"].Value = itemId;
+                    foreach (string view in views)
+                    {
+                        cmd.CommandText = string.Format("select * from {0} where ItemID = @item", view);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                await reader.ReadAsync();
+                                item = RpgHelper.ParseItem(reader);
+                            }
+                            reader.Close();
+                        }
+                        if (item != null) break;
+                    }
+                    if (item == null)
+                    {
+                        throw new RPGItemNotFoundException(itemId);
+                    }
+                    result.Add(item);
+                }
+                return result;
+            }
+        }
 
         public static async Task<Item> GetSpecificItemInfoAsync(SqlConnection conn, SqlTransaction tr, int itemId)
         {
@@ -145,7 +188,7 @@ namespace FernoBotV1.Modules.Games.RPG
             if (item == null) throw new RPGItemNotFoundException(itemId);
             return item;
         }
-
+        [Obsolete]
         public static async Task<Item> GetSpecificItemInfoAsync(SqlConnection conn, SqlTransaction tr, string itemName)
         {
             Item item = null;
@@ -180,6 +223,7 @@ namespace FernoBotV1.Modules.Games.RPG
             return item;
         }
 
+        [Obsolete]
         public static async Task<List<Item>> GetSimilarItemInfoAsync(SqlConnection conn, SqlTransaction tr, string itemName)
         {
             List<Item> items = new List<Item>();
