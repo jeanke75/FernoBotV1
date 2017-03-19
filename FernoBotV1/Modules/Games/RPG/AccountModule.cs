@@ -69,12 +69,20 @@ namespace FernoBotV1.Modules.Games.RPG
                     subtype = ArmorType.Gauntlets
                 },
                 1
+            },
+            {
+                new Potion
+                {
+                    name = "tiny health potion",
+                    heal = 30,
+                },
+                2
             }
         };
 
         [Command(nameof(Create))]
         [Summary("Start your adventure")]
-        [Cooldown(0, 1, 0)]
+        [Cooldown(0, 0, 5)]
         public async Task Create()
         {
             try
