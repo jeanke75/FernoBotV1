@@ -9,7 +9,7 @@ namespace FernoBotV1.Extensions
 {
     public static class ItemExtensions
     {
-        public static bool IsEquippable(this Item it) => it is Armor || it is Weapon;
+        public static bool IsEquippable(this Item it) => it.type == ItemType.Armor || it.type == ItemType.Weapon;
 
     }
 }

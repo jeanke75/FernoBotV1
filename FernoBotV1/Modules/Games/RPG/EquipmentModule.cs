@@ -92,7 +92,7 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }*/
 
-        private async static Task EquipItemAsync(SqlConnection conn, SqlTransaction tr, long userId, Item item)
+        public async static Task EquipItemAsync(SqlConnection conn, SqlTransaction tr, long userId, Item item)
         {
             string colName = "";
             switch (item.type)
@@ -141,7 +141,7 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
-        private async static Task EquipItemsAsync(SqlConnection conn, SqlTransaction tr, long userId, List<Item> items)
+        public async static Task EquipItemsAsync(SqlConnection conn, SqlTransaction tr, long userId, IEnumerable<Item> items)
         {
             using (SqlCommand cmd = conn.CreateCommand())
             {

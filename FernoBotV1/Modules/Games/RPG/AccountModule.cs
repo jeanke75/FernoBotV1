@@ -9,6 +9,7 @@ using Discord.Commands;
 using FernoBotV1.Preconditions;
 using FernoBotV1.Services.Database.Models;
 using FernoBotV1.Services.Exceptions;
+using FernoBotV1.Extensions;
 
 namespace FernoBotV1.Modules.Games.RPG
 {
@@ -98,9 +99,8 @@ namespace FernoBotV1.Modules.Games.RPG
                                 var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
 
                                 await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
-                                // TODO pluriscient
                                 //await EquipmentModule.EquipItemsAsync(conn, tr, userId, DefaultItemCollection.);
-
+                                await EquipmentModule.EquipItemsAsync(conn, tr, userId, DefaultItemCollection.Where(kvp => kvp.Key.IsEquippable()).Select(kvp => kvp.Key));
                                 await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
 
                                 tr.Commit();
