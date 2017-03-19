@@ -5,6 +5,7 @@ using Discord.Commands;
 using FernoBotV1.Services.Database.Models;
 using System.Collections.Generic;
 using FernoBotV1.Services.Exceptions;
+using FernoBotV1.Extensions;
 
 namespace FernoBotV1.Modules.Games.RPG
 {
@@ -140,62 +141,61 @@ namespace FernoBotV1.Modules.Games.RPG
             }
         }
 
-        /*private async static Task EquipItemsAsync(SqlConnection conn, SqlTransaction tr, long userId, List<Item> item)
+        private async static Task EquipItemsAsync(SqlConnection conn, SqlTransaction tr, long userId, List<Item> items)
         {
-            string colName = "";
-            switch (item.type)
-            {
-                case ItemType.Weapon:
-                    colName = "WeaponID";
-                    break;
-                case ItemType.Armor:
-
-                    switch ((item as Armor).subtype)
-                    {
-                        case ArmorType.Helmet:
-                            colName = "HelmetID";
-                            break;
-                        case ArmorType.Upper:
-                            colName = "UpperID";
-                            break;
-                        case ArmorType.Pants:
-                            colName = "PantsID";
-                            break;
-                        case ArmorType.Boots:
-                            colName = "BootsID";
-                            break;
-                        case ArmorType.Gauntlets:
-                            colName = "GloveID";
-                            break;
-                        case ArmorType.Mantle:
-                            colName = "MantleID";
-                            break;
-                        case ArmorType.Shield:
-                            colName = "ShieldID";
-                            break;
-                    }
-                    break;
-            }
-
-            if (colName == "") throw new RPGInvalidItemTypeException($"{item.name} can't be equipped.");
-
             using (SqlCommand cmd = conn.CreateCommand())
             {
                 cmd.Transaction = tr;
                 cmd.Parameters.AddWithValue("@user", userId);
-                cmd.Parameters.AddWithValue("@item", item.id);
-                cmd.CommandText = $"update Equipped set {colName} = @item where UserID = @user";
+
+                string cmdString = "";
+                foreach (Item item in items)
+                {
+                    if (!item.IsEquippable()) continue;
+
+                    string colName = "";
+                    switch (item.type)
+                    {
+                        case ItemType.Weapon:
+                            colName = "WeaponID";
+                            break;
+                        case ItemType.Armor:
+
+                            switch ((item as Armor).subtype)
+                            {
+                                case ArmorType.Helmet:
+                                    colName = "HelmetID";
+                                    break;
+                                case ArmorType.Upper:
+                                    colName = "UpperID";
+                                    break;
+                                case ArmorType.Pants:
+                                    colName = "PantsID";
+                                    break;
+                                case ArmorType.Boots:
+                                    colName = "BootsID";
+                                    break;
+                                case ArmorType.Gauntlets:
+                                    colName = "GloveID";
+                                    break;
+                                case ArmorType.Mantle:
+                                    colName = "MantleID";
+                                    break;
+                                case ArmorType.Shield:
+                                    colName = "ShieldID";
+                                    break;
+                            }
+                            break;
+                    }
+                    if (colName == "") continue;
+
+                    cmd.Parameters.AddWithValue("@item" + item.id, item.id);
+                    cmdString += $"update Equipped set {colName} = @item{item.id} where UserID = @user;";
+                }
+
+                cmd.CommandText = cmdString;
                 await cmd.ExecuteNonQueryAsync();
             }
-
-
-            string cmdString = "";
-            foreach (var kvp in items)
-            {
-                cmd.Parameters.Add("@item" + kvp.Key, DbType.Int32).Value = kvp.Key;
-                cmd.Parameters.Add("@amount" + kvp.Key, DbType.Int32).Value = kvp.Value;
-                cmdString += $"insert into Inventory (UserID, ItemID, Amount) values (@user, @item{kvp.Key}, @amount{kvp.Value});";
-            }
-        }*/
+        }
     }
 }

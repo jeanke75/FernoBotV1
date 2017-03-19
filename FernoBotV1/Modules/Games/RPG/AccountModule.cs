@@ -98,6 +98,8 @@ namespace FernoBotV1.Modules.Games.RPG
                                 var d = DefaultItemCollection.ToDictionary(s => s.Key.id, s => s.Value);
 
                                 await InventoryModule.AddItemsToInventoryAsync(conn, tr, userId, d);
+                                // TODO pluriscient
+                                //await EquipmentModule.EquipItemsAsync(conn, tr, userId, DefaultItemCollection.);
 
                                 await ReplyAsync($"{Context.Message.Author.Username}, your adventure has started. May the Divine spirits guide you on your adventures. (!help for a list of commands)");
 
