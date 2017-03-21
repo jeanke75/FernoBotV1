@@ -49,6 +49,19 @@ namespace FernoBotV1.Modules.Public
             );
         }
 
+        [Command("embedtest")]
+        public async Task EmbedTest()
+        {
+            //var embed = new Embed()
+            var embed = new EmbedBuilder()
+                .WithColor(Color.Default)
+                .WithTitle("Info")
+                .WithCurrentTimestamp()
+                .WithDescription("A test of the embed...")
+                .WithFooter(efb => efb.WithText("A footer"));
+            await Context.Channel.SendMessageAsync("testest", embed: embed.Build());
+        }
+
         private static string GetUptime() => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"d\d\ h\h\ m\m\ s\s");
         private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
